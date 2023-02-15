@@ -3,20 +3,24 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import sqlite3
 
-#connected to database
-connector = sqlite3.connect('base.db') 
+if __name__ == "__main__":
+    #connected to database
+    connector = sqlite3.connect('base.db') 
 
-#convert sqlite database to pandas dataframe
-people = pd.read_sql_query("SELECT * FROM people", connector)
-card = pd.read_sql_query("SELECT * FROM card", connector)
+    people_str = "SELECT * FROM people"
+    card_str = "SELECT * FROM card"
 
-inner_join = pd.merge(left=people, right=card, left_on=['id'], 
-        right_on=['owner'], suffixes=('_l', '_r'))
+    #convert sqlite database to pandas dataframe
+    people = pd.read_sql_query(people_str, connector)
+    card = pd.read_sql_query(card_str, connector)
 
-table = pa.Table.from_pandas(inner_join)
+    inner_join = pd.merge(left=people, right=card, left_on=['id'], 
+            right_on=['owner'], suffixes=('_l', '_r'))
 
-pq.write_to_dataset(
-    table,
-    root_path='join.parquet',
-    partition_cols=['creation_date'],
-)
+    table = pa.Table.from_pandas(inner_join)
+
+    pq.write_to_dataset(
+        table,
+        root_path='join.parquet',
+        partition_cols=['creation_date'],
+    )
