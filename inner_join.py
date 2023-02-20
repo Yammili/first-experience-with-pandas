@@ -22,7 +22,7 @@ except KeyError:
     logging.error("No such config exists.")
     config_info = config["DEFAULT"]
 
-if __name__ == "__main__":
+def convert ():
     #connected to database
     connector = sqlite3.connect('base.db') 
 
@@ -52,3 +52,6 @@ if __name__ == "__main__":
         logging.info("The data is recorded in .parquet format.")
     finally:
         logging.info("The work is finished.")
+
+if __name__ == "__main__":
+    convert()
